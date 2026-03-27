@@ -1,0 +1,8 @@
+bin/
+build/
+*.o
+*.elf
+*.bin
+.vscode/
+*.swp
+*~
