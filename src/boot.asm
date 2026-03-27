@@ -15,10 +15,6 @@ start:
     mov ax, 0xB800
     mov es, ax
 
-    mov word [es:0], 0x4F41
-    mov word [es:2], 0x4F42
-    mov word [es:4], 0x4F43
-
     mov ax, 0x00
     mov ds, ax
     mov es, ax
