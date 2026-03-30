@@ -3,6 +3,8 @@
 IDTEntry idt[256];
 IDTPointer idtr;
 
+extern void idt_load(IDTPointer* idtr);
+
 extern void isr0();
 extern void isr1();
 extern void isr2();
@@ -80,6 +82,6 @@ void idt_set_entry(int n, unsigned int handler){
     idt[n].selector    = 0x08; 
     idt[n].zero        = 0;
     idt[n].type_attr   = 0x8E;
-    idt[n].offset_high = (handler >> 16) & 0xFFFF
+    idt[n].offset_high = (handler >> 16) & 0xFFFF;
 
 }
