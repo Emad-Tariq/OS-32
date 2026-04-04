@@ -12,8 +12,6 @@ KERNEL_START_ADDR equ 0x10000
 
 start:
     cli
-    mov ax, 0xB800
-    mov es, ax
 
     mov ax, 0x00
     mov ds, ax
@@ -21,8 +19,6 @@ start:
     mov ss, ax
     mov sp, 0x7c00
 
-;Load kernel
-; mov bx, KERNEL_LOAD_SEG
 mov ax, KERNEL_LOAD_SEG
 mov es, ax
 xor bx, bx

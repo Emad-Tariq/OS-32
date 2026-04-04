@@ -38,6 +38,23 @@ extern void isr29();
 extern void isr30();
 extern void isr31();
 
+extern void irq0();
+extern void irq1();
+extern void irq2();
+extern void irq3();
+extern void irq4();
+extern void irq5();
+extern void irq6();
+extern void irq7();
+extern void irq8();
+extern void irq9();
+extern void irq10();
+extern void irq11();
+extern void irq12();
+extern void irq13();
+extern void irq14();
+extern void irq15();
+
 void idt_init(){
     idt_set_entry(0, (unsigned int)isr0);
     idt_set_entry(1, (unsigned int)isr1);
@@ -71,6 +88,23 @@ void idt_init(){
     idt_set_entry(29, (unsigned int)isr29);
     idt_set_entry(30, (unsigned int)isr30);
     idt_set_entry(31, (unsigned int)isr31);
+
+    idt_set_entry(0x20, (unsigned int)irq0);
+    idt_set_entry(0x21, (unsigned int)irq1);
+    idt_set_entry(0x22, (unsigned int)irq2);
+    idt_set_entry(0x23, (unsigned int)irq3);
+    idt_set_entry(0x24, (unsigned int)irq4);
+    idt_set_entry(0x25, (unsigned int)irq5);
+    idt_set_entry(0x26, (unsigned int)irq6);
+    idt_set_entry(0x27, (unsigned int)irq7);
+    idt_set_entry(0x28, (unsigned int)irq8);
+    idt_set_entry(0x29, (unsigned int)irq9);
+    idt_set_entry(0x2A, (unsigned int)irq10);
+    idt_set_entry(0x2B, (unsigned int)irq11);
+    idt_set_entry(0x2C, (unsigned int)irq12);
+    idt_set_entry(0x2D, (unsigned int)irq13);
+    idt_set_entry(0x2E, (unsigned int)irq14);
+    idt_set_entry(0x2F, (unsigned int)irq15);
     idtr.limit = (sizeof(IDTEntry) * 256) - 1;
     idtr.base  = (unsigned int)&idt;
 
