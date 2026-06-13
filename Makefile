@@ -21,7 +21,7 @@ all:
 
 	dd if=./bin/boot.bin of=./bin/os.bin
 	dd if=./bin/kernel.bin >> ./bin/os.bin
-	dd if=/dev/zero bs=512 count=8 >> ./bin/os.bin
+	dd if=/dev/zero bs=512 count=32 >> ./bin/os.bin
 
 
 clean:

@@ -27,7 +27,7 @@ mov dl, 0x80
 mov cl, 0x02
 mov ch, 0x00
 mov ah, 0x02
-mov al, 8
+mov al, 32
 int 0x13
 
 jc disk_read_error
