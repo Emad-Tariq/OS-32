@@ -1,4 +1,4 @@
-FILES = ./build/kernel.asm.o ./build/kernel.o ./build/terminal.o ./build/idt.o ./build/isr.o ./build/isr.asm.o ./build/irq.asm.o ./build/irq.o ./build/pic.o ./build/io.asm.o
+FILES = ./build/kernel.asm.o ./build/kernel.o ./build/terminal.o ./build/idt.o ./build/isr.o ./build/isr.asm.o ./build/irq.asm.o ./build/irq.o ./build/pic.o ./build/io.asm.o ./build/pmm.o ./build/Emalloc.o
 FLAGS = -g -ffreestanding -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
 
 all:
@@ -14,6 +14,8 @@ all:
 	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Interrupts/isr.c -o ./build/isr.o
 	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Interrupts/pic.c -o ./build/pic.o
 	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Interrupts/irq.c -o ./build/irq.o
+	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Memory/pmm.c -o ./build/pmm.o
+	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Memory/Emalloc.c -o ./build/Emalloc.o
 
 	i686-elf-ld -g -relocatable $(FILES) -o ./build/mergedKernel.o
 	i686-elf-gcc $(FLAGS) -T ./linker.ld -o ./bin/kernel.elf -ffreestanding -O0 -nostdlib ./build/mergedKernel.o

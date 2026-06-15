@@ -29,8 +29,33 @@ mov ch, 0x00
 mov ah, 0x02
 mov al, 32
 int 0x13
-
 jc disk_read_error
+
+mov ax, 0x00
+mov es, ax
+mov ds, ax
+
+mov word [0x500], 0
+mov edi, 0x504
+xor ebx, ebx
+
+E820_loop:
+
+    mov eax, 0xE820
+    mov edx, 0x534D4150
+    mov ecx, 24
+    int 0x15
+    jc E820_done
+
+    add edi, 24
+    inc word [0x500]
+
+    cmp ebx, 0
+    je E820_done
+
+    jmp E820_loop
+E820_done:
+    jmp load_PM
 
 
 load_PM:
