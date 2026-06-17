@@ -1,5 +1,6 @@
 #include "../IO/io.h"
 #include "../Terminal/terminal.h"
+#include "../Process/process.h"
 #include "irq.h"
 
 char scancode_table[128];  // uninitialized global — safe, lives in .bss
@@ -124,8 +125,8 @@ void send_eoi(int irq){
 
 void irq0_handler(){
     //Timer interrupt
-    print("TIMER INTERRUPT");
     send_eoi(0);
+    process_switch();
 }
 
 void irq1_handler(){

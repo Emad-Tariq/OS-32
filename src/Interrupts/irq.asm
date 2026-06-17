@@ -32,6 +32,17 @@ global irq12
 global irq13
 global irq14
 global irq15
+global current_esp
+current_esp:
+    resd 1
+irq0:
+    pusha
+    mov [current_esp], esp
+    push 0
+    call irq0_handler
+    add esp, 4
+    popa
+    iret
 
 %macro IRQ 1
 irq%1:
@@ -42,7 +53,6 @@ irq%1:
     popa
     iret
 %endmacro
-IRQ 0
 IRQ 1
 IRQ 2
 IRQ 3

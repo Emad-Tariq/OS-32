@@ -7,6 +7,16 @@
 #include "Memory/pmm.h"
 #include "Memory/Emalloc.h"
 #include "Memory/paging.h"
+#include "Process/process.h"
+
+void procA()
+{
+    while(1) printf("A");
+}
+void procB()
+{
+    while(1) printf("B");
+}
 
 void init(){
     idt_init();
@@ -16,11 +26,16 @@ void init(){
     pmm_init();
     Emalloc_init();
     paging_init();
-    outb(0x21, 0xFD); //Unmask keyboard interrupts, 0xFD = 1111 1101 (bit 1 is unmasked)
+    process_init();
+    outb(0x21, 0xFC); //Unmask keyboard interrupts, 0xFD = 1111 1101 (bit 1 is unmasked)
     sti();
 }
 
 void kmain() {
     init();
+
+    process_spawn(&procA);
+    process_spawn(&procB);
+
     while(1);
 }
