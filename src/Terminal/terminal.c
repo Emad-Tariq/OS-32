@@ -36,6 +36,7 @@ void type(char c){
     if(cursor >= SCREEN_HEIGHT * SCREEN_WIDTH){
         clear();
         cursor = 0;
+        update_cursor();
     }
 
     update_cursor();
@@ -76,7 +77,7 @@ void printint(int n){
     }
 }
 
-void printhex(int n){
+void printhex(unsigned int n){
     type('0');
     type('x');
     
@@ -117,7 +118,7 @@ void printf(const char* fmt, ...){
                 type(c);
             }
             else if(fmt[i] == 'x'){
-                int n = va_args(args, int);
+                unsigned int n = va_args(args, unsigned int);
                 printhex(n);
             }
         } else {

@@ -12,6 +12,7 @@ typedef struct Block{
 void Emalloc_init();
 void* Emalloc(unsigned int bytes);
 void Efree(void* ptr);
+void print_heap();
 
 
 

@@ -19,14 +19,18 @@ void* Emalloc(unsigned int bytes){
     Block* iter = heap;
     while(iter != 0){
         if(iter->size >= bytes && iter->free){
-            Block* next_block = (Block*)((char*)iter + sizeof(Block) + bytes);
-            next_block->free = 1;
-            next_block->size = iter->size - bytes - sizeof(Block);
-            next_block->next = 0;
+            if(iter->size > bytes){
+                Block* next_block = (Block*)((char*)iter + sizeof(Block) + bytes);
+                next_block->free = 1;
+                next_block->size = iter->size - bytes - sizeof(Block);
+                next_block->next = 0;
 
-            iter->size = bytes;
-            iter->free = 0;
-            iter->next = next_block;
+                iter->size = bytes;
+                iter->free = 0;
+                iter->next = next_block;
+            } else{
+                iter->free = 0;
+            }
 
             return (void*)((char*)iter + sizeof(Block));
         }
@@ -51,4 +55,15 @@ void Efree(void* ptr){
         iter = iter->next;
         }
     }
+}
+
+void print_heap(){
+    Block* iter = heap;
+    int count = 0;
+    while(iter != 0){
+        printf("Block %d, Size: %d, Free: %d, Next: %x\n", count, iter->size, iter->free, (unsigned int)iter->next);
+        count++;
+        iter = iter->next;
+    }
+    printf("\n");
 }

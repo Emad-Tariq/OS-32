@@ -18,7 +18,7 @@ void clear();
 void putc(char c, int pos);
 void print(char* s);
 void printint(int n);
-void printhex(int n);
+void printhex(unsigned int n);
 void printf(const char* fmt, ...);
 
 

@@ -1,4 +1,4 @@
-FILES = ./build/kernel.asm.o ./build/kernel.o ./build/terminal.o ./build/idt.o ./build/isr.o ./build/isr.asm.o ./build/irq.asm.o ./build/irq.o ./build/pic.o ./build/io.asm.o ./build/pmm.o ./build/Emalloc.o
+FILES = ./build/kernel.asm.o ./build/kernel.o ./build/terminal.o ./build/idt.o ./build/isr.o ./build/isr.asm.o ./build/irq.asm.o ./build/irq.o ./build/pic.o ./build/io.asm.o ./build/pmm.o ./build/Emalloc.o ./build/paging.o ./build/enable_paging.asm.o
 FLAGS = -g -ffreestanding -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
 
 all:
@@ -7,6 +7,7 @@ all:
 	nasm -f elf -g ./src/Interrupts/isr.asm -o ./build/isr.asm.o
 	nasm -f elf -g ./src/Interrupts/irq.asm -o ./build/irq.asm.o 
 	nasm -f elf -g ./src/IO/io.asm -o ./build/io.asm.o
+	nasm -f elf -g ./src/Memory/enable_paging.asm -o ./build/enable_paging.asm.o
 
 	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/kernel.c -o ./build/kernel.o
 	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Terminal/terminal.c -o ./build/terminal.o
@@ -16,6 +17,7 @@ all:
 	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Interrupts/irq.c -o ./build/irq.o
 	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Memory/pmm.c -o ./build/pmm.o
 	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Memory/Emalloc.c -o ./build/Emalloc.o
+	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Memory/paging.c -o ./build/paging.o
 
 	i686-elf-ld -g -relocatable $(FILES) -o ./build/mergedKernel.o
 	i686-elf-gcc $(FLAGS) -T ./linker.ld -o ./bin/kernel.elf -ffreestanding -O0 -nostdlib ./build/mergedKernel.o

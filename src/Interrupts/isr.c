@@ -14,7 +14,21 @@ void isr10_handler() { print("Exception: Invalid TSS"); }
 void isr11_handler() { print("Exception: Segment Not Present"); }
 void isr12_handler() { print("Exception: Stack Segment Fault"); }
 void isr13_handler() { print("Exception: General Protection Fault"); }
-void isr14_handler() { print("Exception: Page Fault"); }
+
+void isr14_handler() {
+    unsigned int fault_addr;
+    unsigned int cr0;
+    asm volatile(
+        "mov %%cr2, %0"
+        : "=r"(fault_addr)
+    );
+    printf("Exception: Page Fault at %x\n", fault_addr);
+    asm volatile("mov %%cr0, %0" : "=r"(cr0));
+    printf("CR0 = %x\n", cr0);
+    while(1);
+}
+
+
 void isr15_handler() { print("Exception: Reserved"); }
 void isr16_handler() { print("Exception: FPU Exception"); }
 void isr17_handler() { print("Exception: Alignment Check"); }

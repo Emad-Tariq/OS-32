@@ -7,11 +7,11 @@ void pmm_init(){
     MemMapEntry* PMM = (MemMapEntry*)0x504;
     unsigned short count = *(unsigned short*)0x500;
     bitmap = (unsigned int*)BITMAP_ADDR;
-    printf("CHECKING RAM\n");
-    printf("Segment count: %d\n", count);
-    for(int i=0; i<count; i++){
-        printf("base: %x   length: %x   type: %d\n", (unsigned int)PMM[i].base, (unsigned int)PMM[i].length, PMM[i].type);
-    }
+    // printf("CHECKING RAM\n");
+    // printf("Segment count: %d\n", count);
+    // for(int i=0; i<count; i++){
+    //     printf("base: %x   length: %x   type: %d\n", (unsigned int)PMM[i].base, (unsigned int)PMM[i].length, PMM[i].type);
+    // }
 
     for(int i=0; i<BITMAP_SIZE; i++){
         bitmap[i] = 0xFFFFFFFF;
@@ -26,14 +26,16 @@ void pmm_init(){
             unsigned long long page_end = (base + length) / PAGE_SIZE;
 
             for(int page = page_start; page < page_end; page++){
-                bitmap[page / 32] &= ~(1 << (page % 32));
+                //bitmap[page / 32] &= ~(1 << (page % 32));
+                pmm_clear(page);
             }
         }
     }
 
     unsigned long long page_end = (BITMAP_ADDR  + 4 * BITMAP_SIZE) / PAGE_SIZE;
     for(int page = 0; page < page_end; page++){
-        bitmap[page / 32] |= (1 << (page % 32));
+        //bitmap[page / 32] |= (1 << (page % 32));
+        pmm_set(page);
     }
 }
 

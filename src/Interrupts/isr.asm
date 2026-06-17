@@ -115,6 +115,7 @@ isr8:
     pusha
     call isr8_handler
     popa
+    add esp, 4
     iret
 isr9:
     pusha
@@ -125,26 +126,31 @@ isr10:
     pusha
     call isr10_handler
     popa
+    add esp, 4
     iret
 isr11:
     pusha
     call isr11_handler
     popa
+    add esp, 4
     iret
 isr12:
     pusha
     call isr12_handler
     popa
+    add esp, 4
     iret
 isr13:
     pusha
     call isr13_handler
     popa
+    add esp, 4
     iret
 isr14:
     pusha
     call isr14_handler
     popa
+    add esp, 4
     iret
 isr15:
     pusha
@@ -160,6 +166,7 @@ isr17:
     pusha
     call isr17_handler
     popa
+    add esp, 4
     iret
 isr18:
     pusha
