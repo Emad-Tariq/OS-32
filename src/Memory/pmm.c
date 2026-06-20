@@ -32,7 +32,7 @@ void pmm_init(){
         }
     }
 
-    unsigned long long page_end = (BITMAP_ADDR  + 4 * BITMAP_SIZE) / PAGE_SIZE;
+    unsigned int page_end = (BITMAP_ADDR  + 4 * BITMAP_SIZE) / PAGE_SIZE;
     for(int page = 0; page < page_end; page++){
         //bitmap[page / 32] |= (1 << (page % 32));
         pmm_set(page);
@@ -67,5 +67,12 @@ void* pmm_alloc(unsigned int numpages){
     }
 
     printf("FATAL: pmm: Not enough memory\n");
+}
+
+void pmm_free(unsigned int address, unsigned int numpages){
+    unsigned int page_num = address / PAGE_SIZE;
+    for(int i=0; i<numpages; i++){
+        pmm_clear(page_num + i);
+    }
 }
 

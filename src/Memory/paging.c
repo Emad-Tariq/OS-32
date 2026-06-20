@@ -1,21 +1,85 @@
 #include "paging.h"
-#include "pmm.h"
-#include "../Terminal/terminal.h"
 
-unsigned int* PageDirectory;
-unsigned int* PageTable;
+unsigned int* kernelPD;
+unsigned int* kernelPT;
 
 void paging_init(){
-    PageDirectory = (unsigned int*)pmm_alloc(1);
-    PageTable = (unsigned int*)pmm_alloc(1);
+    kernelPD = (unsigned int*)pmm_alloc(1);
+    kernelPT = (unsigned int*)pmm_alloc(1);
 
     for(int i=0; i<1024; i++){
-        PageTable[i] = (i * PAGE_SIZE) | PAGE_PRESENT | PAGE_WRITABLE | PAGE_USER;
+        kernelPT[i] = (i * PAGE_SIZE) | PAGE_PRESENT | PAGE_WRITABLE | PAGE_USER;
     }
-    PageDirectory[0] = ((unsigned int)PageTable) | PAGE_PRESENT | PAGE_WRITABLE;
+    kernelPD[0] = ((unsigned int)kernelPT) | PAGE_PRESENT | PAGE_WRITABLE;
     for(int i = 1; i < 1024; i++){
-        PageDirectory[i] = 0;
+        kernelPD[i] = 0;
     }
 
-    paging_enable(PageDirectory);
+    paging_enable(kernelPD);
+}
+
+unsigned int* create_page_directory(){
+    unsigned int* newPD = (unsigned int*)pmm_alloc(1);
+    for(int i=0; i<1024; i++){
+        newPD[i] = kernelPD[i];
+    }
+    return newPD;
+}
+
+void map_page(unsigned int* pagedirectory, unsigned int virt, unsigned int phy, unsigned int EFLAGS){
+    unsigned int PD_idx = (virt >> 22) & 0x3FF;
+    unsigned int PT_idx = (virt >> 12) & 0x3FF;
+
+    unsigned int* pagetable;
+    if(!(pagedirectory[PD_idx] & PAGE_PRESENT)){
+        pagetable = pmm_alloc(1);
+        for(int i=0; i<1024; i++){
+            pagetable[i] = 0;
+        }
+
+        pagedirectory[PD_idx] = (((unsigned int)pagetable) | PAGE_PRESENT | PAGE_WRITABLE);
+    }
+    else{
+        pagetable = (unsigned int*)(pagedirectory[PD_idx] & 0xFFFFF000);
+    }
+
+    pagetable[PT_idx] = phy | EFLAGS;
+    tlb_flush();
+}
+
+void unmap_page(unsigned int* pagedirectory, unsigned int virt){
+    unsigned int PD_idx = (virt >> 22) & 0x3FF;
+    unsigned int PT_idx = (virt >> 12) & 0x3FF;
+
+    unsigned int* pagetable;
+    if(!(pagedirectory[PD_idx] & PAGE_PRESENT)) return;
+    pagetable = (unsigned int*)(pagedirectory[PD_idx] & 0xFFFFF000);
+    pagetable[PT_idx] = 0;
+
+    int empty = 1;
+    for(int i=0; i<1024; i++){
+        if(pagetable[i] & PAGE_PRESENT){
+            empty = 0;
+            break;
+        }
+    }
+
+    if(empty){
+        pmm_free((unsigned int)pagetable, 1);
+        pagedirectory[PD_idx] = 0;
+    }
+    tlb_flush();
+}
+
+unsigned int get_phy_addr(unsigned int* pagedirectory, unsigned int virt){
+    unsigned int PD_idx = (virt >> 22) & 0x3FF;
+    unsigned int PT_idx = (virt >> 12) & 0x3FF;
+
+    unsigned int* pagetable;
+    if(!(pagedirectory[PD_idx] & PAGE_PRESENT)) return 0;
+
+    pagetable = (unsigned int*)(pagedirectory[PD_idx] & 0xFFFFF000);
+
+    if(!(pagetable[PT_idx] & PAGE_PRESENT)) return 0;
+    return pagetable[PT_idx] & 0xFFFFF000;
 }

@@ -1,4 +1,5 @@
 #include "idt.h"
+#include "../Terminal/terminal.h"
 
 IDTEntry idt[256];
 IDTPointer idtr;

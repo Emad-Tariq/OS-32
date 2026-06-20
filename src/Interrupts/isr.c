@@ -1,4 +1,6 @@
 #include "../Terminal/terminal.h"
+#include "../Memory/paging.h"
+#include "../Process/process.h"
 
 void isr0_handler()  { print("Exception: Division By Zero"); while(1);}
 void isr1_handler()  { print("Exception: Debug"); }
@@ -12,19 +14,39 @@ void isr8_handler()  { print("Exception: Double Fault"); }
 void isr9_handler()  { print("Exception: Coprocessor Segment Overrun"); }
 void isr10_handler() { print("Exception: Invalid TSS"); }
 void isr11_handler() { print("Exception: Segment Not Present"); }
-void isr12_handler() { print("Exception: Stack Segment Fault"); }
-void isr13_handler() { print("Exception: General Protection Fault"); }
+void isr12_handler() {
+    printf("STACK FAULT\n");
+    //for(int i=0; i<1000000000; i++){}
+    while(1);
+}
+void isr13_handler() {
+    printf("GPF\n");
+    //for(int i=0; i<1000000000; i++){}
+    while(1);
+}
 
 void isr14_handler() {
-    unsigned int fault_addr;
-    unsigned int cr0;
-    asm volatile(
-        "mov %%cr2, %0"
-        : "=r"(fault_addr)
-    );
-    printf("Exception: Page Fault at %x\n", fault_addr);
-    asm volatile("mov %%cr0, %0" : "=r"(cr0));
-    printf("CR0 = %x\n", cr0);
+    if(current_process >= 0){
+        unsigned int fault_addr;
+        asm volatile(
+            "mov %%cr2, %0"
+            : "=r"(fault_addr)
+        );
+        printf("Exception: Page Fault at %x\n", fault_addr);
+        printf("esp: %x\n", process_table[current_process].esp);
+        fault_addr &= 0xFFFFF000;
+        //for(int i=0; i<1000000000; i++){}
+
+        if(fault_addr >= process_table[current_process].stack_base && fault_addr < process_table[current_process].stack_top){
+            void* page = pmm_alloc(1);
+            map_page(process_table[current_process].PD, fault_addr, (unsigned int)page, PAGE_PRESENT | PAGE_WRITABLE);
+            tlb_flush();
+            return;
+        }
+        
+        // printf("CR0 = %x\n", cr0);
+        printf("Segmentation Fault");
+    }
     while(1);
 }
 

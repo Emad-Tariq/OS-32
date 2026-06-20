@@ -43,6 +43,8 @@ irq0:
     add esp, 4
     popa
     iret
+    ; cli
+    ; hlt
 
 %macro IRQ 1
 irq%1:
