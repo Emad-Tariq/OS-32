@@ -125,7 +125,6 @@ void send_eoi(int irq){
 }
 
 void irq0_handler(){
-    //Timer interrupt
     system_ticks++;
     send_eoi(0);
     process_switch();

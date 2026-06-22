@@ -44,13 +44,14 @@ void process_switch(){
 }
 
 void process_spawn(void (*entry)(void)){
-    //if(process_count >= MAX_PROCESS) return;
+    printf("SPAWN\n");
+    if(process_count >= MAX_PROCESS) {printf("fatal: too many processes\n"); return;}
     unsigned int* PD = create_page_directory();
     unsigned int* phy_stack = pmm_alloc(1);
 
     printf("Stack at: %x\n", (unsigned int)phy_stack);
-    printf("Function pointer -> %x\n", (unsigned int)entry);
-    printf("Page Directory -> %x\n", (unsigned int)PD);
+    //printf("Function pointer -> %x\n", (unsigned int)entry);
+    //printf("Page Directory -> %x\n", (unsigned int)PD);
     map_page(
         PD,
         PROCESS_STACK_TOP - PAGE_SIZE,
@@ -91,6 +92,9 @@ void process_spawn(void (*entry)(void)){
             process_table[i].stack_base = (unsigned int)PROCESS_STACK_BASE;
             process_table[i].stack_top = (unsigned int)PROCESS_STACK_TOP;
             process_table[i].PD = PD;
+            process_count++;
+
+            printf("PID: %d\n", process_table[i].pid);
             return;
         }
     }

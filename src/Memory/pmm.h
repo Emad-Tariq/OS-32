@@ -3,7 +3,7 @@
 
 #define BITMAP_ADDR 0x50000
 #define PAGE_SIZE 4096
-#define MAX_PAGES 32480 //131008 Kb / 4 Kb = 32752
+#define MAX_PAGES 32752 //131008 Kb / 4 Kb = 32752
 #define BITMAP_SIZE 1024
 
 typedef struct {

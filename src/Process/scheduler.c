@@ -30,7 +30,8 @@ void update(){
                 pmm_free(phy, 1);
             }
             process_table[i].state = P_FREE;
-            printf("Process %d freed\n", process_table[i].pid);
+            process_count--;
+            //printf("Process %d freed\n", process_table[i].pid);
         }
         else if(process_table[i].state == P_BLOCKED){
             process_table[i].state = system_ticks >= process_table[i].wakeup_tick ? P_READY : P_BLOCKED;

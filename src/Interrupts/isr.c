@@ -33,9 +33,7 @@ void isr14_handler() {
             : "=r"(fault_addr)
         );
         printf("Exception: Page Fault at %x\n", fault_addr);
-        printf("esp: %x\n", process_table[current_process].esp);
         fault_addr &= 0xFFFFF000;
-        //for(int i=0; i<1000000000; i++){}
 
         if(fault_addr >= process_table[current_process].stack_base && fault_addr < process_table[current_process].stack_top){
             void* page = pmm_alloc(1);

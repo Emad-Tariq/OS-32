@@ -14,6 +14,10 @@ inb:
     ret
 
 global sti 
+global cli
 sti:
     sti
+    ret
+cli:
+    cli
     ret
