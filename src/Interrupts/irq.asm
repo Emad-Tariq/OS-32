@@ -1,4 +1,5 @@
 [BITS 32]
+extern process_save
 extern irq0_handler
 extern irq1_handler
 extern irq2_handler
@@ -33,16 +34,19 @@ global irq13
 global irq14
 global irq15
 global current_esp
+global kernel_esp
 current_esp:
+    resd 1
+kernel_esp:
     resd 1
 irq0:
     pusha
     mov [current_esp], esp
-    push 0
+    mov esp, [kernel_esp]
+    call process_save
     call irq0_handler
-    add esp, 4
-    popa
-    iret
+    cli
+    hlt
 
 %macro IRQ 1
 irq%1:

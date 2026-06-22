@@ -29,6 +29,17 @@ void idle(){
         asm volatile("hlt");
     }
 }
+void spawner(){
+    while(1){
+        for(int i=0; i<15; i++){
+            process_spawn(&procA);
+            process_spawn(&procB);
+        }
+        process_spawn(&procA);
+        process_spawn(&procA);
+        sleep(34);
+    }
+}
 
 void init(){
     terminal_init();
@@ -41,19 +52,13 @@ void init(){
     process_init();
     outb(0x21, 0xFC); //Unmask keyboard interrupts and timer, 0xFC = 1111 1100 (bit 0 and 1 is unmasked)
     scheduler_init();
-
+    kernel_esp = (unsigned int)pmm_alloc(4) + 4*PAGE_SIZE;
+    process_spawn(&spawner);
     process_spawn(&idle);
-    //sti();
 }
 
 void kmain() {
     init();
-    //cli();
-    for(int i=0; i<15; i++){
-        process_spawn(&procA);
-        process_spawn(&procB);
-    }
-    sti();
 
     while(1);
 }

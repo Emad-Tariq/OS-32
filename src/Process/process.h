@@ -7,6 +7,7 @@
 #define PROCESS_STACK_TOP (PROCESS_STACK_BASE + PROCESS_STACK_SIZE)
 
 typedef struct{
+    unsigned int k_esp;
     unsigned int esp;
     unsigned int pid;
     unsigned int stack_top;
@@ -45,6 +46,7 @@ enum{
 // } Process;
 
 void process_init();
+extern void process_save();
 void process_switch();
 void process_spawn(void (*entry)(void));
 void update();

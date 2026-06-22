@@ -1,8 +1,10 @@
+#include "../kernel.h"
 #include "process.h"
 #include "../Memory/pmm.h"
 #include "../Terminal/terminal.h"
 #include "scheduler.h"
 #include "../Memory/paging.h"
+#include "../IO/io.h"
 
 PCB process_table[MAX_PROCESS];
 int process_count;
@@ -18,6 +20,7 @@ void process_init(){
 }
 
 void process_kill(){
+    //printf("dead PID: %d", current_process);
     process_table[current_process].state = P_TERMINATE;
     while(1);
 }
@@ -27,15 +30,15 @@ void process_entry(){
     process_kill();
 }
 
+void process_save(){
+    if(current_process == -1) return;
+    process_table[current_process].esp = current_esp;
+    if(process_table[current_process].state == P_RUNNING) process_table[current_process].state = P_READY;
+}
+
 void process_switch(){
-    //Use a scheduler later here,this is just a dummy basic RR for now
     int next = current_process == -1 ? 0 :schedule();
-    if(current_process != -1){
-        if(process_table[current_process].state == P_RUNNING){
-            process_table[current_process].state = P_READY;
-        }
-        process_table[current_process].esp = current_esp;
-    }
+
     process_table[next].state = P_RUNNING;
     unsigned int new = process_table[next].esp;
 
@@ -44,8 +47,8 @@ void process_switch(){
 }
 
 void process_spawn(void (*entry)(void)){
-    printf("SPAWN\n");
-    if(process_count >= MAX_PROCESS) {printf("fatal: too many processes\n"); return;}
+    cli();
+    if(process_count >= MAX_PROCESS) {printf("fatal: too many processes\n"); sti(); return;}
     unsigned int* PD = create_page_directory();
     unsigned int* phy_stack = pmm_alloc(1);
 
@@ -86,6 +89,7 @@ void process_spawn(void (*entry)(void)){
 
     for(int i=0; i<MAX_PROCESS; i++){
         if(process_table[i].state == P_FREE){
+            process_table[i].k_esp = kernel_esp;
             process_table[i].esp = PROCESS_STACK_TOP - (unsigned int)((unsigned int)phy_stack + PAGE_SIZE - (unsigned int)esp);
             process_table[i].state = P_NEW;
             process_table[i].entry = entry;
@@ -95,7 +99,10 @@ void process_spawn(void (*entry)(void)){
             process_count++;
 
             printf("PID: %d\n", process_table[i].pid);
+            sti();
             return;
         }
     }
+    sti();
+    
 }   

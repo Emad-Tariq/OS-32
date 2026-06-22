@@ -21,13 +21,14 @@ int schedule(){
 
 void update(){
     for(int i=0; i<MAX_PROCESS; i++){
-        if(i == current_process) continue;
+        //if(i == current_process) continue;
         if(process_table[i].state == P_TERMINATE){
 
             for(int j=0; j<4; j++){
                 unsigned int phy = get_phy_addr(process_table[i].PD, process_table[i].stack_base + j*PAGE_SIZE);
                 unmap_page(process_table[i].PD, process_table[i].stack_base + j*PAGE_SIZE);
                 pmm_free(phy, 1);
+                pmm_free((unsigned int)process_table[current_process].PD, 1);
             }
             process_table[i].state = P_FREE;
             process_count--;

@@ -1,7 +1,6 @@
 #include "paging.h"
 
 unsigned int* kernelPD;
-//unsigned int* kernelPT;
 
 void paging_init(){
     kernelPD = (unsigned int*)pmm_alloc(1);
