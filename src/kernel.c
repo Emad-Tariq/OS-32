@@ -12,14 +12,21 @@
 
 void procA()
 {
-    //while(1) {printf("a"); sleep(5);}
-    for(int i=0; i<1; i++) printf("A");
+    char* p = Emalloc(&process_table[current_process], 5000);
+
+    for(int i=0; i<5000; i++)
+        p[i] = 0xAA;
+
+    for(int i=0; i<5000; i++)
+    {
+        if(p[i] != (char)0xAA)
+            printf("CORRUPTION\n");
+    }
     return;
 }
 void procB()
 {
-    //while(1) printf("B");
-    for(int i=0; i<1; i++) printf("B");
+    char* p = Emalloc(&process_table[current_process], 100);
     return;
 }
 void idle(){
@@ -38,6 +45,8 @@ void spawner(){
         process_spawn(&procA);
         process_spawn(&procA);
         sleep(1);
+
+        printf("free pages: %d\n", pmm_free_pages());
     }
 }
 

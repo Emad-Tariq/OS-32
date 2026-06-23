@@ -46,7 +46,7 @@ void process_spawn(void (*entry)(void)){
     unsigned int* PD = create_page_directory();
     unsigned int* phy_stack = pmm_alloc(1);
 
-    printf("Stack at: %x\n", (unsigned int)phy_stack);
+    //printf("Stack at: %x\n", (unsigned int)phy_stack);
     //printf("Function pointer -> %x\n", (unsigned int)entry);
     //printf("Page Directory -> %x\n", (unsigned int)PD);
     map_page(
@@ -95,7 +95,7 @@ void process_spawn(void (*entry)(void)){
             Emalloc_init(&process_table[i]);
             process_count++;
 
-            printf("PID: %d\n", process_table[i].pid);
+            //printf("PID: %d\n", process_table[i].pid);
             sti();
             return;
         }
