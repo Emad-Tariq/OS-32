@@ -20,6 +20,8 @@ void pmm_clear(int page);
 
 void* pmm_alloc(unsigned int numpages);
 void pmm_free(unsigned int address, unsigned int numpages);
+unsigned int pmm_free_pages();
+unsigned int pmm_used_pages();
 
 
 #endif

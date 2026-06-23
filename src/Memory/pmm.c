@@ -2,6 +2,7 @@
 #include "Terminal/terminal.h"
 
 unsigned int *bitmap;
+int free_pages;
 
 void pmm_init(){
     MemMapEntry* PMM = (MemMapEntry*)0x504;
@@ -37,6 +38,7 @@ void pmm_init(){
         //bitmap[page / 32] |= (1 << (page % 32));
         pmm_set(page);
     }
+    free_pages = MAX_PAGES;
 }
 
 void pmm_set(int page){
@@ -62,6 +64,7 @@ void* pmm_alloc(unsigned int numpages){
             for(unsigned int j = 0; j < numpages; j++){
                 pmm_set(page + j);
             }
+            free_pages -= numpages;
             return (void*)(page * PAGE_SIZE);
         }
     }
@@ -74,5 +77,12 @@ void pmm_free(unsigned int address, unsigned int numpages){
     for(int i=0; i<numpages; i++){
         pmm_clear(page_num + i);
     }
+    free_pages += numpages;
+}
+unsigned int pmm_free_pages(){
+    return free_pages;
 }
 
+unsigned int pmm_used_pages(){
+    return MAX_PAGES - free_pages;
+}

@@ -5,8 +5,17 @@
 #define PROCESS_STACK_BASE 0x80000000
 #define PROCESS_STACK_SIZE 0x4000
 #define PROCESS_STACK_TOP (PROCESS_STACK_BASE + PROCESS_STACK_SIZE)
+#define HEAP_BASE 0x80005000
 
-typedef struct{
+#include "../Memory/Emalloc.h"
+#include "../Memory/pmm.h"
+#include "../Terminal/terminal.h"
+#include "scheduler.h"
+#include "../Memory/paging.h"
+#include "../IO/io.h"
+#include "../kernel.h"
+
+typedef struct PCB{
     unsigned int k_esp;
     unsigned int esp;
     unsigned int pid;
@@ -15,6 +24,9 @@ typedef struct{
     unsigned int wakeup_tick;
     unsigned int* PD;
     int state;
+    unsigned int heap_start;
+    unsigned int heap_end;
+    struct Heap* heap;
     void (*entry)(void);
 } PCB;
 
@@ -31,19 +43,6 @@ enum{
     P_BLOCKED,
     P_TERMINATE
 };
-
-// typedef struct{
-//     unsigned int esp;
-//     unsigned int ebp;
-//     unsigned int eip;
-//     unsigned int cr3;
-
-//     // general purpose registers
-//     unsigned int eax;
-//     unsigned int ebx;
-//     unsigned int ecx;
-//     unsigned int edx;
-// } Process;
 
 void process_init();
 extern void process_save();

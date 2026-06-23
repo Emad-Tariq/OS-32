@@ -28,8 +28,16 @@ void update(){
                 unsigned int phy = get_phy_addr(process_table[i].PD, process_table[i].stack_base + j*PAGE_SIZE);
                 unmap_page(process_table[i].PD, process_table[i].stack_base + j*PAGE_SIZE);
                 pmm_free(phy, 1);
-                pmm_free((unsigned int)process_table[current_process].PD, 1);
             }
+            for(int j=0; j<(process_table[i].heap_end - process_table[i].heap_start) / PAGE_SIZE; j++){
+                unsigned int virt = process_table[i].heap_start + j*PAGE_SIZE;
+                unsigned phy = get_phy_addr(process_table[i].PD, virt);
+
+                unmap_page(process_table[i].PD, virt);
+                pmm_free(phy, 1);
+            }
+
+            pmm_free((unsigned int)process_table[i].PD, 1);
             process_table[i].state = P_FREE;
             process_count--;
             //printf("Process %d freed\n", process_table[i].pid);

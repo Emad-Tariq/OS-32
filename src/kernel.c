@@ -37,7 +37,7 @@ void spawner(){
         }
         process_spawn(&procA);
         process_spawn(&procA);
-        sleep(34);
+        sleep(1);
     }
 }
 
@@ -47,7 +47,6 @@ void init(){
     pic_init();
     scancode_init();
     pmm_init();
-    Emalloc_init();
     paging_init();
     process_init();
     outb(0x21, 0xFC); //Unmask keyboard interrupts and timer, 0xFC = 1111 1100 (bit 0 and 1 is unmasked)

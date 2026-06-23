@@ -1,10 +1,4 @@
-#include "../kernel.h"
 #include "process.h"
-#include "../Memory/pmm.h"
-#include "../Terminal/terminal.h"
-#include "scheduler.h"
-#include "../Memory/paging.h"
-#include "../IO/io.h"
 
 PCB process_table[MAX_PROCESS];
 int process_count;
@@ -48,7 +42,7 @@ void process_switch(){
 
 void process_spawn(void (*entry)(void)){
     cli();
-    if(process_count >= MAX_PROCESS) {printf("fatal: too many processes\n"); sti(); return;}
+    if(process_count >= MAX_PROCESS) {sti(); return;}
     unsigned int* PD = create_page_directory();
     unsigned int* phy_stack = pmm_alloc(1);
 
@@ -95,7 +89,10 @@ void process_spawn(void (*entry)(void)){
             process_table[i].entry = entry;
             process_table[i].stack_base = (unsigned int)PROCESS_STACK_BASE;
             process_table[i].stack_top = (unsigned int)PROCESS_STACK_TOP;
+            process_table[i].heap_start = HEAP_BASE;
+            process_table[i].heap_end = HEAP_BASE;
             process_table[i].PD = PD;
+            Emalloc_init(&process_table[i]);
             process_count++;
 
             printf("PID: %d\n", process_table[i].pid);
