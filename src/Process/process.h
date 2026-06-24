@@ -14,10 +14,12 @@
 #include "../Memory/paging.h"
 #include "../IO/io.h"
 #include "../kernel.h"
+#include "../Loader/elf.h"
 
 typedef struct PCB{
     unsigned int k_esp;
     unsigned int esp;
+    unsigned int eip;
     unsigned int pid;
     unsigned int stack_top;
     unsigned int stack_base;
@@ -27,7 +29,7 @@ typedef struct PCB{
     unsigned int heap_start;
     unsigned int heap_end;
     struct Heap* heap;
-    void (*entry)(void);
+    //void (*entry)(void);
 } PCB;
 
 extern unsigned int current_esp;

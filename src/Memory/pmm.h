@@ -14,14 +14,18 @@ typedef struct {
 }__attribute__((packed)) MemMapEntry;
 
 void pmm_init();
+
 void pmm_set(int page);
 int pmm_test(int page);
 void pmm_clear(int page);
 
 void* pmm_alloc(unsigned int numpages);
 void pmm_free(unsigned int address, unsigned int numpages);
+
 unsigned int pmm_free_pages();
 unsigned int pmm_used_pages();
 
+void memcpy(void* dest, const void* src, unsigned int n);
+void memset(void* ptr, int value, unsigned int n);
 
 #endif

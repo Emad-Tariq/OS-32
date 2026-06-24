@@ -50,6 +50,7 @@ void pmm_clear(int page){
 int pmm_test(int page){
     return bitmap[page / 32] & (1 << (page % 32));
 }
+
 void* pmm_alloc(unsigned int numpages){
     for(int page = 0; page < MAX_PAGES; page++){
         int free = 1;
@@ -71,7 +72,6 @@ void* pmm_alloc(unsigned int numpages){
 
     printf("FATAL: pmm: Not enough memory\n");
 }
-
 void pmm_free(unsigned int address, unsigned int numpages){
     unsigned int page_num = address / PAGE_SIZE;
     for(int i=0; i<numpages; i++){
@@ -79,10 +79,28 @@ void pmm_free(unsigned int address, unsigned int numpages){
     }
     free_pages += numpages;
 }
+
 unsigned int pmm_free_pages(){
     return free_pages;
 }
-
 unsigned int pmm_used_pages(){
     return MAX_PAGES - free_pages;
+}
+
+void memcpy(void* dest, const void* src, unsigned int n){
+    unsigned char* d = (unsigned char*)dest;
+    unsigned char* s = (unsigned char*)src;
+
+    for(int i=0; i<n; i++){
+        d[i] = s[i];
+    }
+
+    return;
+}
+void memset(void* ptr, int value, unsigned int n){
+    unsigned char* p = (unsigned char*)ptr;
+
+    for(int i=0; i<n; i++){
+        p[i] = (unsigned char)value;
+    }
 }
