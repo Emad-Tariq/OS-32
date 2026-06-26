@@ -1,4 +1,4 @@
-FILES = ./build/kernel.asm.o ./build/kernel.o ./build/terminal.o ./build/idt.o ./build/isr.o ./build/isr.asm.o ./build/irq.asm.o ./build/irq.o ./build/pic.o ./build/io.asm.o ./build/pmm.o ./build/Emalloc.o ./build/paging.o ./build/enable_paging.asm.o ./build/process.o ./build/context_switch.asm.o ./build/scheduler.o ./build/tlb_flush.asm.o ./build/elf.o ./build/hello_elf.o ./build/pci.o ./build/ata.o
+FILES = ./build/kernel.asm.o ./build/kernel.o ./build/terminal.o ./build/idt.o ./build/isr.o ./build/isr.asm.o ./build/irq.asm.o ./build/irq.o ./build/pic.o ./build/io.asm.o ./build/pmm.o ./build/Emalloc.o ./build/paging.o ./build/enable_paging.asm.o ./build/process.o ./build/context_switch.asm.o ./build/scheduler.o ./build/tlb_flush.asm.o ./build/elf.o ./build/hello_elf.o ./build/pci.o ./build/ata.o ./build/fs.o
 FLAGS = -g -ffreestanding -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
 
 all:
@@ -25,6 +25,7 @@ all:
 	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Loader/elf.c -o ./build/elf.o
 	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Drivers/PCI/pci.c -o ./build/pci.o
 	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Drivers/ATA/ata.c -o ./build/ata.o
+	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/FileSystem/fs.c -o ./build/fs.o
 
 	i686-elf-gcc -ffreestanding -nostdlib -T user_linker.ld ./src/User/hello.c -o ./build/hello.elf
 	i686-elf-objcopy -I binary -O elf32-i386 -B i386 ./build/hello.elf ./build/hello_elf.o
@@ -38,6 +39,7 @@ all:
 	dd if=/dev/zero bs=512 count=32 >> ./bin/os.bin
 	dd if=/dev/zero of=./bin/disk.img bs=1M count=16
 	dd if=./bin/os.bin of=./bin/disk.img conv=notrunc
+	dd if=./build/hello.elf of=./bin/disk.img bs=512 seek=69 conv=notrunc
 
 
 clean:

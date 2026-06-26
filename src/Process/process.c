@@ -40,15 +40,14 @@ void process_switch(){
     switch_context(new, (unsigned int)process_table[next].PD);
 }
 
-void process_spawn(){
+void process_spawn(void* image){
     cli();
     if(process_count >= MAX_PROCESS) {sti(); return;}
     unsigned int* PD = create_page_directory();
     unsigned int* phy_stack = pmm_alloc(1);
 
-    //printf("Stack at: %x\n", (unsigned int)phy_stack);
-    //printf("Function pointer -> %x\n", (unsigned int)entry);
-    //printf("Page Directory -> %x\n", (unsigned int)PD);
+    printf("Stack at: %x\n", (unsigned int)phy_stack);
+    printf("Page Directory -> %x\n", (unsigned int)PD);
     map_page(
         PD,
         PROCESS_STACK_TOP - PAGE_SIZE,
@@ -81,7 +80,7 @@ void process_spawn(){
             process_table[i].heap_end = HEAP_BASE;
             process_table[i].PD = PD;
             Emalloc_init(&process_table[i]);
-            load_elf(_binary___build_hello_elf_start, &process_table[i]);\
+            load_elf(image, &process_table[i]);\
             *(--esp) = (unsigned int)process_table[i].eip;
 
             *(--esp) = 0; // EAX
@@ -94,7 +93,6 @@ void process_spawn(){
             *(--esp) = 0; // EDI
             process_table[i].esp = PROCESS_STACK_TOP - (unsigned int)((unsigned int)phy_stack + PAGE_SIZE - (unsigned int)esp);
             process_count++;
-            
             sti();
             return;
         }

@@ -49,7 +49,7 @@ enum{
 void process_init();
 extern void process_save();
 void process_switch();
-void process_spawn();
+void process_spawn(void* image);
 void update();
 extern void switch_context(unsigned int new_process, unsigned int PD);
 extern void load_cr3(unsigned int PD);

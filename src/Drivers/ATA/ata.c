@@ -9,7 +9,7 @@ void ata_identify(){
     outb(ATA_PRIMARY_IO + ATA_REG_LBA0, 0);
     outb(ATA_PRIMARY_IO + ATA_REG_LBA1, 0);
     outb(ATA_PRIMARY_IO + ATA_REG_LBA2, 0);
-    outb(ATA_PRIMARY_IO + ATA_REG_COMMAND, 0xEC);
+    outb(ATA_PRIMARY_IO + ATA_REG_COMMAND, IDENFITY);
 
     ata_wait();
 
@@ -18,7 +18,7 @@ void ata_identify(){
         data[i] = inw(ATA_PRIMARY_IO + ATA_REG_DATA);
     }
 
-    printf("ATA: %x %x %x %x %x\n", data[0], data[49], data[53], data[60], data[61]);
+    //printf("ATA: %x %x %x %x %x\n", data[0], data[49], data[53], data[60], data[61]);
     char model[41];
 
     for(int i = 27; i <= 46; i++)
@@ -57,22 +57,52 @@ void ata_identify(){
     printf("Sectors: %d\n", sectors);
 }
 
+int ata_read_sector(unsigned int lba, void* buffer){
+    outb(ATA_PRIMARY_IO + ATA_REG_HDDEVSEL, 0xE0 | (lba >> 24) & 0x0F);
+    ata_load();
+    outb(ATA_PRIMARY_IO + ATA_REG_SECCOUNT, 1);
+    outb(ATA_PRIMARY_IO + ATA_REG_LBA0, lba & 0xFF);
+    outb(ATA_PRIMARY_IO + ATA_REG_LBA1, (lba >> 8) & 0xFF);
+    outb(ATA_PRIMARY_IO + ATA_REG_LBA2, (lba >> 16) & 0xFF);
+    outb(ATA_PRIMARY_IO + ATA_REG_COMMAND, READ);
+
+    if(ata_wait() == -1){
+        printf("fatal: ata: could not read sectors\n");
+        return 0;
+    }
+    unsigned short* data = buffer;
+    for(int j=0; j<256; j++){
+        data[j] = inw(ATA_PRIMARY_IO + ATA_REG_DATA);
+    }
+    return 1;
+}
+
+int ata_read(unsigned int lba, void* buffer, unsigned int sectors){
+    int flag = 1;
+    for(int i=0; i<sectors; i++){
+        flag &= ata_read_sector(lba + i, (char*)buffer + i*512);
+        if(flag == 0) return -1;
+    }
+    return 0;
+}
+
 void ata_load(){
     inb(ATA_PRIMARY_CTRL);
     inb(ATA_PRIMARY_CTRL);
     inb(ATA_PRIMARY_CTRL);
     inb(ATA_PRIMARY_CTRL);
 }
-void ata_wait(){
+int ata_wait(){
     while (1) {
         unsigned char status = inb(ATA_PRIMARY_IO + ATA_REG_STATUS);
 
         if (status & ATA_SR_ERR) {
-            printf("ATA Error\n");
-            return;
+            return -1;
         }
 
         if (!(status & ATA_SR_BSY) && (status & ATA_SR_DRQ))
             break;
     }
+
+    return 0;
 }

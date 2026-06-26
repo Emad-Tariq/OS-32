@@ -7,6 +7,9 @@
 #define ATA_PRIMARY_IO      0x1F0
 #define ATA_PRIMARY_CTRL    0x3F6
 
+#define IDENFITY            0xEC
+#define READ                0x20
+
 #define ATA_REG_DATA        0
 #define ATA_REG_ERROR       1
 #define ATA_REG_SECCOUNT    2
@@ -27,7 +30,8 @@
 #define ATA_SR_BSY          0x80
 
 void ata_identify();
+int ata_read(unsigned int lba, void* buffer, unsigned int sectors);
 void ata_load();
-void ata_wait();
+int ata_wait();
 
 #endif
