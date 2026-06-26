@@ -1,13 +1,5 @@
 #include "kernel.h"
 
-void idle(){
-    while(1){
-        
-        update();
-        asm volatile("hlt");
-    }
-}
-
 void init(){
     terminal_init();
     idt_init();
@@ -18,8 +10,10 @@ void init(){
     process_init();
     outb(0x21, 0xFC); //Unmask keyboard interrupts and timer, 0xFC = 1111 1100 (bit 0 and 1 is unmasked)
     scheduler_init();
+    //pci_init();
+    ata_identify();
     kernel_esp = (unsigned int)pmm_alloc(4) + 4*PAGE_SIZE;
-    process_spawn(&idle);
+    process_spawn();
 }
 
 void kmain() {

@@ -12,6 +12,8 @@
 #include "Process/process.h"
 #include "Process/scheduler.h"
 #include "Loader/elf.h"
+#include "Drivers/PCI/pci.h"
+#include "Drivers/ATA/ata.h"
 
 extern unsigned char _binary___build_hello_elf_start[];
 extern unsigned char _binary___build_hello_elf_end[];

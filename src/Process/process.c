@@ -40,7 +40,7 @@ void process_switch(){
     switch_context(new, (unsigned int)process_table[next].PD);
 }
 
-void process_spawn(void (*entry)(void)){
+void process_spawn(){
     cli();
     if(process_count >= MAX_PROCESS) {sti(); return;}
     unsigned int* PD = create_page_directory();
@@ -94,41 +94,7 @@ void process_spawn(void (*entry)(void)){
             *(--esp) = 0; // EDI
             process_table[i].esp = PROCESS_STACK_TOP - (unsigned int)((unsigned int)phy_stack + PAGE_SIZE - (unsigned int)esp);
             process_count++;
-            printf("Entry: %x\n", process_table[i].eip);
-            printf("PID: %d\n", process_table[i].pid);
-            unsigned int old_cr3;
-
-            asm volatile(
-                "mov %%cr3, %0"
-                : "=r"(old_cr3)
-            );
-
-            asm volatile(
-                "mov %0, %%cr3"
-                :
-                : "r"(PD)
-                : "memory"
-            );
-
-            unsigned char* code =
-            (unsigned char*)process_table[i].eip;
-
-            printf(
-                "%x %x %x %x\n",
-                code[0],
-                code[1],
-                code[2],
-                code[3]
-            );
-
-            asm volatile(
-                "mov %0, %%cr3"
-                :
-                : "r"(old_cr3)
-                : "memory"
-            );
-            printf("Process ESP = %x\n", process_table[i].esp);
-            //for(int i=0; i<1000000000; i++){}
+            
             sti();
             return;
         }
