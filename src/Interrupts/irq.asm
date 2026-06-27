@@ -35,14 +35,19 @@ global irq14
 global irq15
 global current_esp
 global kernel_esp
+global kernel_pd
 current_esp:
     resd 1
 kernel_esp:
+    resd 1
+kernel_pd:
     resd 1
 irq0:
     pusha
     mov [current_esp], esp
     mov esp, [kernel_esp]
+    mov eax, [kernel_pd]
+    mov cr3, eax
     call process_save
     call irq0_handler
     cli

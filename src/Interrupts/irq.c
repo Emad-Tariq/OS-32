@@ -7,6 +7,7 @@
 char scancode_table[128];  // uninitialized global — safe, lives in .bss
 char scancode_shift_table[128];
 int shift;
+static int depth = 0;
 
 void scancode_init() {
     scancode_table[0x02] = '1';
@@ -127,7 +128,7 @@ void send_eoi(int irq){
 void irq0_handler(){
     system_ticks++;
     update();
-    send_eoi(0);
+    //send_eoi(0);
     process_switch();
 }
 

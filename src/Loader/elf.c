@@ -59,6 +59,6 @@ int load_elf(void* image, PCB* proc){
         );
     }
 
-    proc->eip = Ehdr->e_entry;
+    proc->e_entry = Ehdr->e_entry;
     return 0;
 }

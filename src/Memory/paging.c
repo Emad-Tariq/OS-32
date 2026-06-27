@@ -1,25 +1,23 @@
 #include "paging.h"
 
-unsigned int* kernelPD;
-
 void paging_init(){
-    kernelPD = (unsigned int*)pmm_alloc(1);
+    kernel_pd = (unsigned int*)pmm_alloc(1);
     for(int i=0; i<1024; i++){
         unsigned int* kernelPT = (unsigned int*)pmm_alloc(1);
         for(int j=0; j<1024; j++){
             kernelPT[j] = ((i * 1024 + j) * PAGE_SIZE) | PAGE_PRESENT | PAGE_WRITABLE | PAGE_USER;
         }
-        kernelPD[i] = ((unsigned int)kernelPT) | PAGE_PRESENT | PAGE_WRITABLE;
+        kernel_pd[i] = ((unsigned int)kernelPT) | PAGE_PRESENT | PAGE_WRITABLE;
     }
 
-    paging_enable(kernelPD);
+    paging_enable(kernel_pd);
 }
 
 unsigned int* create_page_directory(){
     unsigned int* newPD = (unsigned int*)pmm_alloc(1);
     for(int i=0; i<1024; i++){
         if (i < 512) {
-            newPD[i] = kernelPD[i];
+            newPD[i] = kernel_pd[i];
         } else {
             newPD[i] = 0;
         }

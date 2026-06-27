@@ -3,5 +3,6 @@
 #include "../IO/io.h"
 
 void scancode_init();
+void send_eoi(int irq);
 
 #endif

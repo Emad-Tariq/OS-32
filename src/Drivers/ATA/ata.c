@@ -58,7 +58,7 @@ void ata_identify(){
 }
 
 int ata_read_sector(unsigned int lba, void* buffer){
-    outb(ATA_PRIMARY_IO + ATA_REG_HDDEVSEL, 0xE0 | (lba >> 24) & 0x0F);
+    outb(ATA_PRIMARY_IO + ATA_REG_HDDEVSEL, 0xE0 | ((lba >> 24) & 0x0F));
     ata_load();
     outb(ATA_PRIMARY_IO + ATA_REG_SECCOUNT, 1);
     outb(ATA_PRIMARY_IO + ATA_REG_LBA0, lba & 0xFF);

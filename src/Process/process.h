@@ -15,21 +15,29 @@
 #include "../IO/io.h"
 #include "../kernel.h"
 #include "../Loader/elf.h"
+#include "../FileSystem/fs.h"
+#include "../Interrupts/irq.h"
 
 typedef struct PCB{
     unsigned int k_esp;
+    unsigned int k_pd;
+
     unsigned int esp;
+    unsigned int e_entry;
     unsigned int eip;
+    unsigned int elf_image;
+
     unsigned int pid;
     unsigned int stack_top;
     unsigned int stack_base;
     unsigned int wakeup_tick;
     unsigned int* PD;
     int state;
+
     unsigned int heap_start;
     unsigned int heap_end;
     struct Heap* heap;
-    //void (*entry)(void);
+    
 } PCB;
 
 extern unsigned int current_esp;
@@ -49,7 +57,7 @@ enum{
 void process_init();
 extern void process_save();
 void process_switch();
-void process_spawn(void* image);
+void process_spawn(const char* fname);
 void update();
 extern void switch_context(unsigned int new_process, unsigned int PD);
 extern void load_cr3(unsigned int PD);

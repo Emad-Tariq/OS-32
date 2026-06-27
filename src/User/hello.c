@@ -1,6 +1,6 @@
 #include "../Terminal/terminal.h"
 
 int main(){
-    *((unsigned int*)0xFFFFFFFF) = 123;
-    while(1);
+    //*((unsigned int*)0xFFFFFFFF) = 123;
+    return 0;
 }

@@ -12,15 +12,14 @@ void init(){
     scheduler_init();
     fs_init();
 
-    static unsigned char elf_buff[64 * 1024];
-    ata_read(69, elf_buff, 9);
     kernel_esp = (unsigned int)pmm_alloc(4) + 4*PAGE_SIZE;
-    process_spawn((void*)elf_buff);
+    process_spawn("idle.elf");
+    process_spawn("hello.elf");
 }
 
 void kmain() {
     init();
-    //sti();
+    sti();
 
     while(1);
 }

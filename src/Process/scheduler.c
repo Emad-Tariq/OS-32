@@ -21,7 +21,6 @@ int schedule(){
 
 void update(){
     for(int i=0; i<MAX_PROCESS; i++){
-        //if(i == current_process) continue;
         if(process_table[i].state == P_TERMINATE){
 
             for(int j=0; j<4; j++){
@@ -36,11 +35,23 @@ void update(){
                 unmap_page(process_table[i].PD, virt);
                 pmm_free(phy, 1);
             }
+            Elf32_Ehdr* Ehdr = (Elf32_Ehdr* )process_table[i].elf_image;
+            Elf32_Phdr* Phdr = (Elf32_Phdr*)((unsigned int)Ehdr + Ehdr->e_phoff);
+            for(int j=0; j<Ehdr->e_phnum; j++){
+                if(Phdr[i].p_type != PT_LOAD) continue;
+
+                unsigned int pages = (Phdr[i].p_memsz + PAGE_SIZE - 1)/PAGE_SIZE;
+                unsigned int addr = (Phdr[i].p_vaddr);
+                for(int k=0; k<pages; k++){
+                    unmap_page(process_table[i].PD, addr);
+                    addr += PAGE_SIZE;
+                }
+            }
 
             pmm_free((unsigned int)process_table[i].PD, 1);
             process_table[i].state = P_FREE;
             process_count--;
-            //printf("Process %d freed\n", process_table[i].pid);
+            printf("Process %d freed\n", process_table[i].pid);
         }
         else if(process_table[i].state == P_BLOCKED){
             process_table[i].state = system_ticks >= process_table[i].wakeup_tick ? P_READY : P_BLOCKED;

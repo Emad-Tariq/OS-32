@@ -8,8 +8,7 @@
 #include "pmm.h"
 #include "../Terminal/terminal.h"
 
-extern unsigned int* kernelPD;
-extern unsigned int* kernelPT;
+extern unsigned int* kernel_pd;
 
 void paging_init();
 unsigned int* create_page_directory();

@@ -1,6 +1,16 @@
 #ifndef FS_STRUCTS_H
 #define FS_STRUCTS_H
 
+#define MAGIC               0x4F533332
+#define SUPER_SECTOR        64
+#define FILE_TABLE_SSIZE    4
+#define DATA_LBA          69
+#define MAX_FILES           32
+
+#define FILE_VALID          1
+#define FILE_DIRECTORY      2
+#define FILE_READONLY       4
+
 typedef struct {
     unsigned int magic;
     unsigned int version;
