@@ -34,13 +34,9 @@ global irq13
 global irq14
 global irq15
 global current_esp
-global kernel_esp
-global kernel_pd
+extern kernel_esp
+extern kernel_pd
 current_esp:
-    resd 1
-kernel_esp:
-    resd 1
-kernel_pd:
     resd 1
 irq0:
     pusha

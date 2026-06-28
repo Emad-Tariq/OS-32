@@ -35,18 +35,22 @@ void update(){
                 unmap_page(process_table[i].PD, virt);
                 pmm_free(phy, 1);
             }
+            
             Elf32_Ehdr* Ehdr = (Elf32_Ehdr* )process_table[i].elf_image;
             Elf32_Phdr* Phdr = (Elf32_Phdr*)((unsigned int)Ehdr + Ehdr->e_phoff);
             for(int j=0; j<Ehdr->e_phnum; j++){
-                if(Phdr[i].p_type != PT_LOAD) continue;
+                if(Phdr[j].p_type != PT_LOAD) continue;
 
-                unsigned int pages = (Phdr[i].p_memsz + PAGE_SIZE - 1)/PAGE_SIZE;
-                unsigned int addr = (Phdr[i].p_vaddr);
+                unsigned int pages = (Phdr[j].p_memsz + PAGE_SIZE - 1)/PAGE_SIZE;
+                unsigned int addr = (Phdr[j].p_vaddr);
                 for(int k=0; k<pages; k++){
+                    unsigned int phy = get_phy_addr(process_table[i].PD, addr);
                     unmap_page(process_table[i].PD, addr);
+                    pmm_free(phy, 1);
                     addr += PAGE_SIZE;
                 }
             }
+            pmm_free(process_table[i].elf_image, process_table[i].elf_size / PAGE_SIZE);
 
             pmm_free((unsigned int)process_table[i].PD, 1);
             process_table[i].state = P_FREE;
@@ -57,9 +61,11 @@ void update(){
             process_table[i].state = system_ticks >= process_table[i].wakeup_tick ? P_READY : P_BLOCKED;
         }
     }
+
+    printf("free pages = %d\n", pmm_free_pages());
 }
 
-void sleep(unsigned int ticks){
+void process_sleep(unsigned int ticks){
     process_table[current_process].state = P_BLOCKED;
     process_table[current_process].wakeup_tick = system_ticks + ticks;
     while(process_table[current_process].state == P_BLOCKED);

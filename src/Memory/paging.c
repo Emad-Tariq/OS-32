@@ -1,5 +1,7 @@
 #include "paging.h"
 
+unsigned int* kernel_pd;
+
 void paging_init(){
     kernel_pd = (unsigned int*)pmm_alloc(1);
     for(int i=0; i<1024; i++){
@@ -63,7 +65,6 @@ void unmap_page(unsigned int* pagedirectory, unsigned int virt){
             break;
         }
     }
-
     if(empty){
         pmm_free((unsigned int)pagetable, 1);
         pagedirectory[PD_idx] = 0;

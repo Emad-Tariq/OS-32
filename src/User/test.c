@@ -2,7 +2,7 @@
 
 int main(){
     while(1){
-        write("A ");
+        write("HELLO ");
         yield();
     }
     return 0;

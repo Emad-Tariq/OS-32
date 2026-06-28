@@ -26,6 +26,7 @@ typedef struct PCB{
     unsigned int e_entry;
     unsigned int eip;
     unsigned int elf_image;
+    unsigned int elf_size;
 
     unsigned int pid;
     unsigned int stack_top;
@@ -58,6 +59,7 @@ void process_init();
 extern void process_save();
 void process_switch();
 void process_spawn(const char* fname);
+void process_kill();
 void update();
 extern void switch_context(unsigned int new_process, unsigned int PD);
 extern void load_cr3(unsigned int PD);

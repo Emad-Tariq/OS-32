@@ -37,7 +37,6 @@ void process_switch(){
     unsigned int new = process_table[next].esp;
 
     current_process = next;
-    send_eoi(0);
     switch_context(new, (unsigned int)process_table[next].PD);
 }
 
@@ -57,8 +56,8 @@ void process_spawn(const char* fname){
     unsigned int* PD = create_page_directory();
     unsigned int* phy_stack = pmm_alloc(1);
 
-    printf("Stack at: %x\n", (unsigned int)phy_stack);
-    printf("Page Directory -> %x\n", (unsigned int)PD);
+    // printf("Stack at: %x\n", (unsigned int)phy_stack);
+    // printf("Page Directory -> %x\n", (unsigned int)PD);
     map_page(
         PD,
         PROCESS_STACK_TOP - PAGE_SIZE,
@@ -106,6 +105,7 @@ void process_spawn(const char* fname){
             process_table[i].eip = (unsigned int)&process_entry;
             process_table[i].esp = PROCESS_STACK_TOP - (unsigned int)((unsigned int)phy_stack + PAGE_SIZE - (unsigned int)esp);
             process_table[i].elf_image = (unsigned int)image;
+            process_table[i].elf_size = pages * PAGE_SIZE;
             process_count++;
             Emalloc_init(&process_table[i]);
             load_elf(image, &process_table[i]);

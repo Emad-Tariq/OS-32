@@ -1,5 +1,7 @@
 #include "kernel.h"
 
+unsigned int kernel_esp;
+
 void init(){
     terminal_init();
     idt_init();
@@ -11,10 +13,10 @@ void init(){
     outb(0x21, 0xFC); //Unmask keyboard interrupts and timer, 0xFC = 1111 1100 (bit 0 and 1 is unmasked)
     scheduler_init();
     fs_init();
-
     kernel_esp = (unsigned int)pmm_alloc(4) + 4*PAGE_SIZE;
     process_spawn("idle.elf");
     process_spawn("hello.elf");
+    process_spawn("test.elf");
 }
 
 void kmain() {

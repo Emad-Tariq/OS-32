@@ -16,8 +16,6 @@
 #include "Drivers/ATA/ata.h"
 #include "FileSystem/fs.h"
 
-extern unsigned char _binary___build_hello_elf_start[];
-extern unsigned char _binary___build_hello_elf_end[];
 extern unsigned int kernel_esp;
 
 void kmain();

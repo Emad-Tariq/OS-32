@@ -1,4 +1,4 @@
-FILES = ./build/kernel.asm.o ./build/kernel.o ./build/terminal.o ./build/idt.o ./build/isr.o ./build/isr.asm.o ./build/irq.asm.o ./build/irq.o ./build/pic.o ./build/io.asm.o ./build/pmm.o ./build/Emalloc.o ./build/paging.o ./build/enable_paging.asm.o ./build/process.o ./build/context_switch.asm.o ./build/scheduler.o ./build/tlb_flush.asm.o ./build/elf.o ./build/hello_elf.o ./build/pci.o ./build/ata.o ./build/fs.o
+FILES = ./build/kernel.asm.o ./build/kernel.o ./build/terminal.o ./build/idt.o ./build/isr.o ./build/isr.asm.o ./build/irq.asm.o ./build/irq.o ./build/pic.o ./build/io.asm.o ./build/pmm.o ./build/Emalloc.o ./build/paging.o ./build/enable_paging.asm.o ./build/process.o ./build/context_switch.asm.o ./build/scheduler.o ./build/tlb_flush.asm.o ./build/elf.o ./build/hello_elf.o ./build/pci.o ./build/ata.o ./build/fs.o ./build/syscall.asm.o ./build/syscall.o
 FLAGS = -g -ffreestanding -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
 
 USER_FILES := $(wildcard src/User/*.c)
@@ -12,6 +12,7 @@ all:
 	nasm -f elf -g ./src/Memory/enable_paging.asm -o ./build/enable_paging.asm.o
 	nasm -f elf -g ./src/Memory/tlb_flush.asm -o ./build/tlb_flush.asm.o
 	nasm -f elf -g ./src/Process/context_switch.asm -o ./build/context_switch.asm.o
+	nasm -f elf -g ./src/Syscalls/syscall.asm -o ./build/syscall.asm.o
 
 	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/kernel.c -o ./build/kernel.o
 	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Terminal/terminal.c -o ./build/terminal.o
@@ -28,10 +29,11 @@ all:
 	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Drivers/PCI/pci.c -o ./build/pci.o
 	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Drivers/ATA/ata.c -o ./build/ata.o
 	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/FileSystem/fs.c -o ./build/fs.o
+	i686-elf-gcc -I./src $(FLAGS) -std=gnu99 -c ./src/Syscalls/syscall.c -o ./build/syscall.o
 
 	for f in ./src/User/*.c; do \
 		name=$$(basename $$f .c); \
-		i686-elf-gcc -ffreestanding -nostdlib -T user_linker.ld $$f -o ./build/user/$$name.elf; \
+		i686-elf-gcc -ffreestanding -nostdlib -T user_linker.ld $$f ./src/User/Lib/user.c -o ./build/user/$$name.elf; \
 	done
 
 	i686-elf-ld -g -relocatable $(FILES) -o ./build/mergedKernel.o

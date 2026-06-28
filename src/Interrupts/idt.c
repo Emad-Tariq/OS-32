@@ -55,6 +55,7 @@ extern void irq12();
 extern void irq13();
 extern void irq14();
 extern void irq15();
+extern void syscall();
 
 void idt_init(){
     idt_set_entry(0, (unsigned int)isr0);
@@ -106,6 +107,7 @@ void idt_init(){
     idt_set_entry(0x2D, (unsigned int)irq13);
     idt_set_entry(0x2E, (unsigned int)irq14);
     idt_set_entry(0x2F, (unsigned int)irq15);
+    idt_set_entry(0x80, (unsigned int)syscall);
     idtr.limit = (sizeof(IDTEntry) * 256) - 1;
     idtr.base  = (unsigned int)&idt;
 
